@@ -73,7 +73,7 @@ const Deposit = () => {
         amount: parseFloat(amount)
       });
       toast({ title: "Deposit successful!", status: 'success' });
-      
+
       eventBus.emit('financeDataChanged'); // EMIT THE GLOBAL EVENT
 
       setSelectedGroupId(groups.length === 1 ? selectedGroupId : ''); // Keep group selected if only one
@@ -91,7 +91,7 @@ const Deposit = () => {
       <Box p={8} borderWidth="1px" borderRadius="lg" shadow="md">
         <Heading mb={6}>Add a Deposit</Heading>
         <VStack as="form" spacing={4} onSubmit={handleSubmit}>
-          
+
           {loadingGroups ? <Spinner /> : (
             groups.length > 1 ? (
               <FormControl isRequired>
@@ -102,8 +102,8 @@ const Deposit = () => {
               </FormControl>
             ) : groups.length === 1 ? (
               <FormControl>
-                  <FormLabel>Group</FormLabel>
-                  <Text p={2} borderWidth="1px" borderRadius="md" bg="gray.100">{groups[0].group_name}</Text>
+                <FormLabel>Group</FormLabel>
+                <Text p={2} borderWidth="1px" borderRadius="md" bg="gray.100">{groups[0].group_name}</Text>
               </FormControl>
             ) : (
               <Text color="gray.500">You do not manage any groups.</Text>
@@ -124,7 +124,7 @@ const Deposit = () => {
               <NumberInputField placeholder="100.00" />
             </NumberInput>
           </FormControl>
-          <Button type="submit" colorScheme="teal" width="full" isLoading={isSubmitting} isDisabled={!selectedUserId || !amount}>
+          <Button type="submit" colorScheme="brand" width="full" isLoading={isSubmitting} isDisabled={!selectedUserId || !amount}>
             Submit Deposit
           </Button>
         </VStack>

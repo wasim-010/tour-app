@@ -27,7 +27,7 @@ const AddDepositModal = ({ isOpen, onClose, groupId, users, onDepositSuccess }) 
         amount: parseFloat(amount)
       });
       toast({ title: 'Deposit added successfully!', status: 'success' });
-      
+
       eventBus.emit('financeDataChanged'); // EMIT THE GLOBAL EVENT
 
       if (onDepositSuccess) {
@@ -74,7 +74,7 @@ const AddDepositModal = ({ isOpen, onClose, groupId, users, onDepositSuccess }) 
         </ModalBody>
         <ModalFooter>
           <Button onClick={onClose} isDisabled={isSubmitting}>Cancel</Button>
-          <Button colorScheme="teal" ml={3} onClick={handleSubmit} isLoading={isSubmitting}>
+          <Button colorScheme="brand" ml={3} onClick={handleSubmit} isLoading={isSubmitting}>
             Add Deposit
           </Button>
         </ModalFooter>

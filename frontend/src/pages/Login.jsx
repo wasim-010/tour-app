@@ -1,11 +1,17 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
 import {
-  Box, Button, FormControl, FormLabel, Input, Heading, VStack, useToast, Link as ChakraLink
+  Heading, VStack, useToast, Link as ChakraLink
 } from '@chakra-ui/react';
-import axios from 'axios';
+import api from '../api/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
+
+// New Shared Components
+import PageContainer from '../components/common/PageContainer';
+import Card from '../components/common/Card';
+import FormInput from '../components/common/FormInput';
+import BrandButton from '../components/common/BrandButton';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,6 +19,7 @@ const Login = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,16 +34,18 @@ const Login = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      const apiUrl = '/api/auth/login';
+      const apiUrl = '/auth/login';
       const userData = { email, password };
-      const response = await axios.post(apiUrl, userData);
+      const response = await api.post(apiUrl, userData);
 
       // Call the global login function from our context
       login(response.data);
-      
+
       // --- ADD THIS LINE FOR DEBUGGING ---
-      console.log(`[Login.jsx] Token set in localStorage: ${localStorage.getItem('token')}`);
+      console.log(`[Login.jsx] Token set in localStorage: ${localStorage.getItem('token')} `);
       // ------------------------------------
 
       toast({
@@ -45,7 +54,7 @@ const Login = () => {
         duration: 3000,
         isClosable: true,
       });
-      
+
       // Redirect the user to their dashboard
       navigate('/dashboard');
 
@@ -58,50 +67,45 @@ const Login = () => {
         isClosable: true,
       });
       console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      minH="100vh"
-    >
-      <Box p={8} maxWidth="500px" borderWidth={1} borderRadius={8} boxShadow="lg">
+    <PageContainer>
+      <Card maxWidth="500px" width="100%">
         <VStack as="form" spacing={4} onSubmit={handleSubmit}>
           <Heading>Login</Heading>
 
-          <FormControl isRequired>
-            <FormLabel>Email address</FormLabel>
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </FormControl>
+          <FormInput
+            label="Email address"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            isRequired
+          />
 
-          <FormControl isRequired>
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </FormControl>
+          <FormInput
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            isRequired
+          />
 
-          <Button type="submit" colorScheme="teal" width="full">
+          <BrandButton type="submit" width="full" isLoading={isLoading}>
             Login
-          </Button>
+          </BrandButton>
 
           <ChakraLink as={RouterLink} to="/register">
             Don't have an account? Register
           </ChakraLink>
         </VStack>
-      </Box>
-    </Box>
+      </Card>
+    </PageContainer>
   );
 };
 

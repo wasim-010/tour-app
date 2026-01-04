@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import {
   Box, Heading, Text, Spinner, Alert, AlertIcon, Tabs, TabList, TabPanels, Tab, TabPanel,
   VStack, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon,
-  Badge, Flex, Spacer, Button, useDisclosure, Modal, ModalOverlay, ModalContent, 
+  Badge, Flex, Spacer, Button, useDisclosure, Modal, ModalOverlay, ModalContent,
   ModalHeader, ModalCloseButton, ModalBody, HStack
 } from '@chakra-ui/react';
 import { TimeIcon } from '@chakra-ui/icons';
@@ -89,19 +89,19 @@ const Itinerary = () => {
         location_name: loc.location_name
       }));
   }, [itinerary, activeDayIndex]);
-  
+
   if (loading) return <Spinner size="xl" display="block" mx="auto" my={8} />;
   if (error) return <Alert status="error"><AlertIcon />{error}</Alert>;
-  
+
   if (!itinerary || !itinerary.days || !itinerary.days.length) {
     return (
-        <Box>
-            <Heading mb={6}>{groupName}</Heading>
-            <Text>No itinerary has been set for this group yet.</Text>
-        </Box>
+      <Box>
+        <Heading mb={6}>{groupName}</Heading>
+        <Text>No itinerary has been set for this group yet.</Text>
+      </Box>
     );
   }
-  
+
   const activeDay = itinerary.days[activeDayIndex];
 
   return (
@@ -114,93 +114,93 @@ const Itinerary = () => {
           </TabList>
           <TabPanels>
             {itinerary.days.map((day, index) => (
-                <TabPanel key={day.day_id}>
-                  <Flex mb={4} align="center" wrap="wrap">
-                    <Text fontSize="lg" fontWeight="bold">{new Date(day.day_date).toDateString()}</Text>
-                    <Spacer />
-                    <Badge colorScheme={day.status === 'Ongoing' ? 'green' : day.status === 'Ended' ? 'red' : 'gray'}>{day.status}</Badge>
-                  </Flex>
+              <TabPanel key={day.day_id}>
+                <Flex mb={4} align="center" wrap="wrap">
+                  <Text fontSize="lg" fontWeight="bold">{new Date(day.day_date).toDateString()}</Text>
+                  <Spacer />
+                  <Badge colorScheme={day.status === 'Ongoing' ? 'green' : day.status === 'Ended' ? 'red' : 'gray'}>{day.status}</Badge>
+                </Flex>
 
-                  {day.description && (
-                    <Text fontStyle="italic" color="gray.700" mb={6} p={4} bg="gray.100" borderRadius="md">
-                      {day.description}
-                    </Text>
-                  )}
-                  
-                  {activeDayIndex === index && (
-                    <Box height="250px" mb={6} position="relative" borderRadius="md" overflow="hidden" bg="gray.200">
-                      <MapView pins={activeDayPins} />
-                      <Button size="sm" colorScheme="blue" position="absolute" top="10px" right="10px" zIndex={1} onClick={onMapOpen}>
-                        Enlarge Map
-                      </Button>
-                    </Box>
-                  )}
-                  
-                  <Accordion allowToggle defaultIndex={[0]}>
-                    {(day.locations || []).map(location => (
-                      <AccordionItem key={location.location_id}>
-                        <h2>
-                          <AccordionButton>
-                            <Box flex="1" textAlign="left" fontWeight="bold">
-                              {location.order_in_day}. {location.location_name}
+                {day.description && (
+                  <Text fontStyle="italic" color="gray.700" mb={6} p={4} bg="gray.100" borderRadius="md">
+                    {day.description}
+                  </Text>
+                )}
+
+                {activeDayIndex === index && (
+                  <Box height="250px" mb={6} position="relative" borderRadius="md" overflow="hidden" bg="gray.200">
+                    <MapView pins={activeDayPins} />
+                    <Button size="sm" colorScheme="blue" position="absolute" top="10px" right="10px" zIndex={1} onClick={onMapOpen}>
+                      Enlarge Map
+                    </Button>
+                  </Box>
+                )}
+
+                <Accordion allowToggle defaultIndex={[0]}>
+                  {(day.locations || []).map(location => (
+                    <AccordionItem key={location.location_id}>
+                      <h2>
+                        <AccordionButton>
+                          <Box flex="1" textAlign="left" fontWeight="bold">
+                            {location.order_in_day}. {location.location_name}
+                          </Box>
+                          {(location.start_time || location.end_time) && (
+                            <HStack spacing={2} color="gray.500" mr={4}>
+                              <TimeIcon />
+                              <Text fontSize="sm" fontWeight="medium">
+                                {formatTime(location.start_time)}
+                                {location.end_time && ` - ${formatTime(location.end_time)}`}
+                              </Text>
+                            </HStack>
+                          )}
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <VStack align="stretch" spacing={3}>
+                          {(location.events || []).map(event => (
+                            <Box key={event.event_id} p={4} borderWidth="1px" borderRadius="lg" shadow="sm">
+                              <Heading size="md">{event.event_name}</Heading>
+                              {event.description && <Text fontSize="sm" color="gray.600" mt={1}>{event.description}</Text>}
+                              <Flex align="center" justify="space-between" mt={4}>
+                                <HStack spacing={1} color="gray.500" minW="80px">
+                                  {event.event_time && <TimeIcon />}
+                                  {event.event_time && <Text fontSize="sm" fontWeight="medium">{formatTime(event.event_time)}</Text>}
+                                </HStack>
+                                <VStack spacing={0}>
+                                  <Text fontWeight="bold" fontSize="lg" color="blue.600">৳{event.estimated_cost_per_unit.toFixed(2)}</Text>
+                                  <Text fontSize="xs" color="gray.500">per unit</Text>
+                                </VStack>
+                                {userRole !== 'admin' && (
+                                  <Button
+                                    colorScheme="brand"
+                                    size="sm"
+                                    onClick={() => handleAddExpenseClick(event)}
+                                    isDisabled={day.status !== 'Ongoing'}
+                                    w="70px"
+                                  >
+                                    Add
+                                  </Button>
+                                )}
+                              </Flex>
                             </Box>
-                            {(location.start_time || location.end_time) && (
-                              <HStack spacing={2} color="gray.500" mr={4}>
-                                <TimeIcon />
-                                <Text fontSize="sm" fontWeight="medium">
-                                  {formatTime(location.start_time)}
-                                  {location.end_time && ` - ${formatTime(location.end_time)}`}
-                                </Text>
-                              </HStack>
-                            )}
-                            <AccordionIcon />
-                          </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                          <VStack align="stretch" spacing={3}>
-                            {(location.events || []).map(event => (
-                              <Box key={event.event_id} p={4} borderWidth="1px" borderRadius="lg" shadow="sm">
-                                <Heading size="md">{event.event_name}</Heading>
-                                {event.description && <Text fontSize="sm" color="gray.600" mt={1}>{event.description}</Text>}
-                                <Flex align="center" justify="space-between" mt={4}>
-                                  <HStack spacing={1} color="gray.500" minW="80px">
-                                    {event.event_time && <TimeIcon />}
-                                    {event.event_time && <Text fontSize="sm" fontWeight="medium">{formatTime(event.event_time)}</Text>}
-                                  </HStack>
-                                  <VStack spacing={0}>
-                                      <Text fontWeight="bold" fontSize="lg" color="blue.600">৳{event.estimated_cost_per_unit.toFixed(2)}</Text>
-                                      <Text fontSize="xs" color="gray.500">per unit</Text>
-                                  </VStack>
-                                  {userRole !== 'admin' && (
-                                    <Button 
-                                      colorScheme="teal" 
-                                      size="sm" 
-                                      onClick={() => handleAddExpenseClick(event)} 
-                                      isDisabled={day.status !== 'Ongoing'}
-                                      w="70px"
-                                    >
-                                      Add
-                                    </Button>
-                                  )}
-                                </Flex>
-                              </Box>
-                            ))}
-                            {location.events.length === 0 && <Text fontSize="sm" color="gray.500">No events for this location.</Text>}
-                          </VStack>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    ))}
-                    {(day.locations || []).length === 0 && <Text mt={4} color="gray.500">No locations for this day.</Text>}
-                  </Accordion>
-                </TabPanel>
-              )
+                          ))}
+                          {location.events.length === 0 && <Text fontSize="sm" color="gray.500">No events for this location.</Text>}
+                        </VStack>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  ))}
+                  {(day.locations || []).length === 0 && <Text mt={4} color="gray.500">No locations for this day.</Text>}
+                </Accordion>
+              </TabPanel>
+            )
             )}
           </TabPanels>
         </Tabs>
       </Box>
-      
+
       <AddExpenseModal isOpen={isExpenseOpen} onClose={onExpenseClose} event={selectedEvent} />
-      
+
       <Modal isOpen={isMapOpen} onClose={onMapClose} size="full">
         <ModalContent display="flex" flexDirection="column" h="100vh">
           <ModalHeader>Day {activeDay?.day_number}: {activeDay?.title}</ModalHeader>

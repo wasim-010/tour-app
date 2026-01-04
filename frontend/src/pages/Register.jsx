@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
   Box, Button, FormControl, FormLabel, Input, Heading, VStack, useToast, Link as ChakraLink
 } from '@chakra-ui/react';
-import axios from 'axios';
+import api from '../api/api';
 import { useNavigate, Link as RouterLink } from 'react-router-dom'; // <-- IMPORT navigation hooks
 
 const Register = () => {
@@ -17,9 +17,9 @@ const Register = () => {
     e.preventDefault();
     // ... (validation code is the same)
     try {
-      const apiUrl = '/api/auth/register';
+      const apiUrl = '/auth/register';
       const userData = { username, email, password };
-      await axios.post(apiUrl, userData);
+      await api.post(apiUrl, userData);
 
       toast({
         title: 'Registration Successful!',
@@ -57,7 +57,7 @@ const Register = () => {
             <FormLabel>Password</FormLabel>
             <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </FormControl>
-          <Button type="submit" colorScheme="teal" width="full">Register</Button>
+          <Button type="submit" colorScheme="brand" width="full">Register</Button>
           <ChakraLink as={RouterLink} to="/login">
             Already have an account? Login
           </ChakraLink>

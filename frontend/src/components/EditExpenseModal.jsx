@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
-  Button, FormControl, FormLabel, NumberInput, NumberInputField, NumberInputStepper, 
+  Button, FormControl, FormLabel, NumberInput, NumberInputField, NumberInputStepper,
   NumberIncrementStepper, NumberDecrementStepper, useToast, VStack, Text,
 } from '@chakra-ui/react';
 import api from '../api/api';
@@ -59,7 +59,7 @@ const EditExpenseModal = ({ isOpen, onClose, expense, onUpdate }) => {
         </ModalBody>
         <ModalFooter>
           <Button onClick={onClose} isDisabled={isSubmitting}>Cancel</Button>
-          <Button colorScheme="teal" ml={3} onClick={handleSubmit} isLoading={isSubmitting}>Save Changes</Button>
+          <Button colorScheme="brand" ml={3} onClick={handleSubmit} isLoading={isSubmitting}>Save Changes</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

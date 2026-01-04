@@ -60,10 +60,10 @@ const AddExpenseModal = ({ isOpen, onClose, event }) => {
             <Text>Estimated cost per unit: <strong>৳{event.estimated_cost_per_unit.toFixed(2)}</strong></Text>
             <FormControl isRequired>
               <FormLabel>Quantity</FormLabel>
-              <NumberInput 
-                defaultValue={1} 
-                min={1} 
-                value={quantity} 
+              <NumberInput
+                defaultValue={1}
+                min={1}
+                value={quantity}
                 onChange={(valueString) => setQuantity(parseInt(valueString) || 1)}
               >
                 <NumberInputField />
@@ -80,7 +80,7 @@ const AddExpenseModal = ({ isOpen, onClose, event }) => {
         </ModalBody>
         <ModalFooter>
           <Button onClick={onClose} isDisabled={isSubmitting}>Cancel</Button>
-          <Button colorScheme="teal" ml={3} onClick={handleSubmit} isLoading={isSubmitting}>Submit Expense</Button>
+          <Button colorScheme="brand" ml={3} onClick={handleSubmit} isLoading={isSubmitting}>Submit Expense</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

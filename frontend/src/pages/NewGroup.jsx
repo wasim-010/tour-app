@@ -77,7 +77,7 @@ const NewGroup = () => {
           </FormControl>
           <Button
             type="submit"
-            colorScheme="teal"
+            colorScheme="brand"
             width="full"
             isLoading={isSubmitting}
           >

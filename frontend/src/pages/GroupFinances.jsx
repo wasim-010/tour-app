@@ -52,7 +52,7 @@ const GroupFinances = () => {
         </Breadcrumb>
         <Flex align="center" justify="space-between" mt={4} mb={6}>
           <Heading>Group Financial Summary</Heading>
-          <Button colorScheme="teal" onClick={onOpen}>Add Deposit</Button>
+          <Button colorScheme="brand" onClick={onOpen}>Add Deposit</Button>
         </Flex>
         {summary && (
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
@@ -91,12 +91,12 @@ const GroupFinances = () => {
           </Table>
         </TableContainer>
       </Box>
-      <AddDepositModal 
-        isOpen={isOpen} 
-        onClose={onClose} 
-        groupId={groupId} 
+      <AddDepositModal
+        isOpen={isOpen}
+        onClose={onClose}
+        groupId={groupId}
         users={memberUsers} // Pass the filtered list to the modal as well
-        onDepositSuccess={fetchFinances} 
+        onDepositSuccess={fetchFinances}
       />
     </>
   );

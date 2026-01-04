@@ -2,6 +2,10 @@
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const config = require('./config');
 
 // Centralized modules
 const socket = require('./socket');
@@ -29,19 +33,16 @@ const server = http.createServer(app);
 // Initialize Socket.IO and pass it the http server
 const io = socket.init(server);
 
-const PORT = process.env.PORT || 3001;
+const PORT = config.port;
 
 // --- Middleware ---
 
 // *** THIS IS THE FIX ***
 // Replace the simple app.use(cors()) with a more detailed configuration.
-const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:4173"], // Allow your frontend origins
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow all common methods
-  allowedHeaders: "Content-Type,Authorization", // Explicitly allow the Authorization header
-  credentials: true,
-};
-app.use(cors(corsOptions));
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined'));
+app.use(cors(config.corsOptions));
 // **********************
 
 app.use(express.json());

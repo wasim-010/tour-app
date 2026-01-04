@@ -46,7 +46,7 @@ export const NotificationProvider = ({ children }) => {
                     console.error("Could not join group rooms:", error);
                 }
             };
-            
+
             joinGroupRooms();
 
             // 2. Listen for 'notification' events from the server
