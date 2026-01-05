@@ -27,7 +27,10 @@ router.post('/login', async (req, res) => {
         }
         const token = jwt.sign({ userId: user.user_id, email: user.email }, jwtSecret, { expiresIn: '24h' });
         res.status(200).json({ token, user: { userId: user.user_id, username: user.username, email: user.email, role: user.role } });
-    } catch (error) { res.status(500).json({ message: 'Server error during login.' }); }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Server error during login.' });
+    }
 });
 
 module.exports = router;
