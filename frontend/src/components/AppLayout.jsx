@@ -41,6 +41,7 @@ const AppLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const isAdmin = user && user.role === 'admin';
@@ -182,11 +183,11 @@ const AppLayout = () => {
                   <p className="text-xs font-bold text-slate-500 tracking-widest uppercase">Member Registry</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-white/5" />
-                <DropdownMenuItem className="flex items-center gap-3 p-3 rounded-xl cursor-not-allowed opacity-50">
+                <DropdownMenuItem className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/5 opacity-100">
                   <User className="h-4 w-4" />
                   <span>Profile Uplink</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-3 p-3 rounded-xl cursor-not-allowed opacity-50">
+                <DropdownMenuItem className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/5 opacity-100">
                   <Settings className="h-4 w-4" />
                   <span>Global Config</span>
                 </DropdownMenuItem>
@@ -203,7 +204,7 @@ const AppLayout = () => {
 
             {/* Mobile Menu */}
             <div className="lg:hidden">
-              <Button variant="ghost" size="icon" className="text-slate-400">
+              <Button variant="ghost" size="icon" className="text-slate-400" onClick={() => setMobileMenuOpen(true)}>
                 <Menu className="h-6 w-6" />
               </Button>
             </div>
@@ -228,6 +229,67 @@ const AppLayout = () => {
           </footer>
         </main>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute top-0 bottom-0 left-0 w-72 bg-[#020617] border-r border-white/10 p-6 shadow-2xl animate-in slide-in-from-left duration-300">
+            <div className="flex items-center justify-between mb-8">
+              <Link to="/dashboard" className="flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
+                <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shadow-2xl shadow-primary/40">
+                  <Plane className="h-6 w-6 text-white -rotate-45" />
+                </div>
+                <span className="text-xl font-bold tracking-tighter italic">
+                  TRIP<span className="text-primary not-italic">PLANNER</span>
+                </span>
+              </Link>
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+                <X className="h-6 w-6 text-slate-400" />
+              </Button>
+            </div>
+            
+            <nav className="space-y-6 overflow-y-auto max-h-[calc(100vh-100px)]">
+              <div>
+                <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-slate-500 ml-3 mb-4">Core Systems</p>
+                {mainNav.map(item => (
+                  <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)}>
+                    <div className={cn(
+                      "flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1",
+                      location.pathname === item.path
+                        ? "bg-primary text-white shadow-lg shadow-primary/20"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    )}>
+                      <item.icon className="h-5 w-5" />
+                      <span className="font-medium text-sm">{item.name}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {isAdmin && (
+                <div>
+                  <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-slate-500 ml-3 mb-4">Operations Control</p>
+                  {operationsNav.map(item => (
+                    <Link key={item.path} to={item.path} onClick={() => setMobileMenuOpen(false)}>
+                      <div className={cn(
+                        "flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1",
+                        location.pathname === item.path
+                          ? "bg-primary text-white shadow-lg shadow-primary/20"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      )}>
+                        <item.icon className="h-5 w-5" />
+                        <span className="font-medium text-sm">{item.name}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </nav>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

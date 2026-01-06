@@ -36,37 +36,79 @@ import {
 import { Skeleton } from '../components/ui/skeleton';
 import { cn } from '../lib/utils';
 
+const MobileUserFinanceCard = ({ user }) => (
+  <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-3">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center">
+          <User2 className="h-4 w-4 text-slate-400" />
+        </div>
+        <span className="font-medium text-white">{user.username}</span>
+      </div>
+      <div className="text-right">
+        <span className={cn(
+          "text-lg font-bold font-mono block",
+          user.balance < 0 ? "text-red-400" : "text-primary"
+        )}>
+          ৳{user.balance.toLocaleString()}
+        </span>
+        <span className="text-[10px] text-slate-500 uppercase tracking-wider">Net Balance</span>
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
+      <div>
+        <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Deposited</span>
+        <span className="text-emerald-400 font-mono font-medium">৳{user.total_deposited.toLocaleString()}</span>
+      </div>
+      <div className="text-right">
+        <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Spent</span>
+        <span className="text-orange-400 font-mono font-medium">৳{user.total_spent.toLocaleString()}</span>
+      </div>
+    </div>
+  </div>
+);
+
 const UserFinanceTable = ({ users }) => (
-  <div className="rounded-2xl border border-white/5 overflow-hidden">
-    <Table>
-      <TableHeader className="bg-white/5">
-        <TableRow>
-          <TableHead className="text-slate-400">Member</TableHead>
-          <TableHead className="text-right text-slate-400">Total Deposited</TableHead>
-          <TableHead className="text-right text-slate-400">Total Spent</TableHead>
-          <TableHead className="text-right text-slate-400">Net Balance</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map(user => (
-          <TableRow key={user.user_id} className={cn(user.balance < 0 && "bg-red-500/5")}>
-            <TableCell className="font-medium text-white flex items-center gap-2">
-              <div className="h-7 w-7 rounded-full bg-slate-800 flex items-center justify-center">
-                <User2 className="h-4 w-4 text-slate-400" />
-              </div>
-              {user.username}
-            </TableCell>
-            <TableCell className="text-right text-emerald-400 font-mono">৳{user.total_deposited.toLocaleString()}</TableCell>
-            <TableCell className="text-right text-orange-400 font-mono">৳{user.total_spent.toLocaleString()}</TableCell>
-            <TableCell className="text-right font-bold font-mono">
-              <span className={user.balance < 0 ? "text-red-400 underline decoration-red-400/30" : "text-primary"}>
-                ৳{user.balance.toLocaleString()}
-              </span>
-            </TableCell>
+  <div className="rounded-2xl md:border md:border-white/5 overflow-hidden border-b-0 space-y-4 md:space-y-0">
+    {/* Mobile View */}
+    <div className="md:hidden space-y-3">
+      {users.map(user => (
+        <MobileUserFinanceCard key={user.user_id} user={user} />
+      ))}
+    </div>
+
+    {/* Desktop View */}
+    <div className="hidden md:block overflow-x-auto">
+      <Table className="min-w-[600px]">
+        <TableHeader className="bg-white/5">
+          <TableRow>
+            <TableHead className="text-slate-400">Member</TableHead>
+            <TableHead className="text-right text-slate-400">Total Deposited</TableHead>
+            <TableHead className="text-right text-slate-400">Total Spent</TableHead>
+            <TableHead className="text-right text-slate-400">Net Balance</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {users.map(user => (
+            <TableRow key={user.user_id} className={cn(user.balance < 0 && "bg-red-500/5")}>
+              <TableCell className="font-medium text-white flex items-center gap-2">
+                <div className="h-7 w-7 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                  <User2 className="h-4 w-4 text-slate-400" />
+                </div>
+                <span className="truncate max-w-[120px]">{user.username}</span>
+              </TableCell>
+              <TableCell className="text-right text-emerald-400 font-mono">৳{user.total_deposited.toLocaleString()}</TableCell>
+              <TableCell className="text-right text-orange-400 font-mono">৳{user.total_spent.toLocaleString()}</TableCell>
+              <TableCell className="text-right font-bold font-mono">
+                <span className={user.balance < 0 ? "text-red-400 underline decoration-red-400/30" : "text-primary"}>
+                  ৳{user.balance.toLocaleString()}
+                </span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   </div>
 );
 
@@ -120,7 +162,7 @@ const AdminFinances = () => {
           <p className="text-slate-400">Master oversight of all tour deposits and spending.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="border-white/10 text-slate-400 gap-2">
+          <Button variant="outline" className="border-white/10 text-slate-400 gap-2 w-full md:w-auto">
             <Download className="h-4 w-4" /> Export Audit
           </Button>
         </div>
@@ -134,7 +176,7 @@ const AdminFinances = () => {
             <BarChart3 className="h-4 w-4" /> Global Finance Summary
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8 md:p-12 relative z-10">
+        <CardContent className="p-6 md:p-12 relative z-10">
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
             <div className="flex-1 text-center md:text-left space-y-2">
               <p className="text-slate-500 text-sm font-medium">Total Global Balance</p>

@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import api from '../api/api';
 import { useAuth } from '../context/AuthContext';
 import MapView from '../components/MapView';
+import AddExpenseModal from '../components/AddExpenseModal';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';

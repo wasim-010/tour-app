@@ -99,28 +99,29 @@ const Dashboard = () => {
   return (
     <div className="space-y-8 fade-in">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-violet-600 p-8 md:p-12 shadow-2xl shadow-primary/20">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-violet-600 p-6 md:p-12 shadow-2xl shadow-primary/20">
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
             Hello, {user?.username} ✈️
           </h1>
           <p className="text-primary-foreground/80 text-lg mb-8">
             Ready for your next adventure? Manage your tour groups and keep track of every detail.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             {user?.role === 'admin' && (
               <Link to="/groups/new">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-xl">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 shadow-xl">
                   <Plus className="mr-2 h-5 w-5" />
                   New Tour
                 </Button>
               </Link>
             )}
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-primary-foreground/50" />
+            <div className="relative flex-1 w-full sm:w-auto min-w-[200px]">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-primary-foreground/60" />
               <Input
                 placeholder="Search tours..."
-                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-white border-none backdrop-blur-md"
+                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus-visible:ring-white border-none backdrop-blur-md"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -128,7 +129,7 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       </div>
 
       {/* Groups Grid */}

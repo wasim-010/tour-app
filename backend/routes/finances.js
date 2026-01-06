@@ -117,7 +117,7 @@ router.get('/admin/event-summary', protect, async (req, res) => {
                 g.group_name,
                 COALESCE(SUM(ex.quantity), 0) as total_quantity,
                 COALESCE(SUM(ex.total_cost), 0) as total_expense,
-                MAX(ex.updated_at) as last_updated -- Get the most recent update timestamp
+                MAX(ex.expense_timestamp) as last_updated
             FROM events e
             JOIN locations l ON e.location_id = l.location_id
             JOIN tour_days td ON l.day_id = td.day_id
@@ -125,7 +125,7 @@ router.get('/admin/event-summary', protect, async (req, res) => {
             LEFT JOIN expenses ex ON e.event_id = ex.event_id
             WHERE g.group_id IN (${placeholders})
             GROUP BY e.event_id, e.event_name, l.location_name, g.group_name
-            ORDER BY MAX(ex.updated_at) DESC, g.group_name, e.event_name;
+            ORDER BY MAX(ex.expense_timestamp) DESC, g.group_name, e.event_name;
         `, groupIds);
 
         res.json(eventSummaries);

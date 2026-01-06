@@ -15,12 +15,14 @@ import {
   FileText,
   History,
   AlertCircle,
-  Loader2
+  Loader2,
+  MapPin
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../api/api';
 import eventBus from '../services/eventBus';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import {
@@ -46,6 +48,7 @@ import {
   DialogTitle
 } from '../components/ui/dialog';
 import { Skeleton } from '../components/ui/skeleton';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { cn } from '../lib/utils';
 
 const EventExpenses = () => {
@@ -207,49 +210,106 @@ const EventExpenses = () => {
                         </div>
                       ) : (
                         details[event.event_id]?.length > 0 ? (
-                          <div className="rounded-2xl border border-white/10 overflow-hidden bg-black/20">
-                            <Table>
-                              <TableHeader className="bg-white/5">
-                                <TableRow>
-                                  <TableHead className="text-slate-400">User</TableHead>
-                                  <TableHead className="text-center text-slate-400">Quantity</TableHead>
-                                  <TableHead className="text-right text-slate-400">Cost</TableHead>
-                                  <TableHead className="text-right text-slate-400">Timestamp</TableHead>
-                                  <TableHead className="w-[80px]"></TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {details[event.event_id].map((detail) => (
-                                  <TableRow key={detail.expense_id} className="hover:bg-white/5 border-white/10">
-                                    <TableCell className="font-medium text-slate-200 flex items-center gap-2">
-                                      <User className="h-3.5 w-3.5 text-primary" />
-                                      {detail.username}
-                                    </TableCell>
-                                    <TableCell className="text-center font-mono">{detail.quantity}</TableCell>
-                                    <TableCell className="text-right font-bold font-mono text-white">৳{detail.total_cost.toLocaleString()}</TableCell>
-                                    <TableCell className="text-right text-[10px] text-slate-500 whitespace-nowrap">
-                                      {new Date(detail.expense_timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </TableCell>
-                                    <TableCell>
-                                      <div className="flex items-center gap-1">
-                                        <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-400 hover:text-white rounded-lg">
-                                          <Edit3 className="h-3.5 w-3.5" />
+                          <>
+                            {/* Mobile Card View */}
+                            <div className="md:hidden space-y-3">
+                              {details[event.event_id].map((detail) => (
+                                <div key={detail.expense_id} className="relative overflow-hidden rounded-2xl bg-white/5 border border-white/5">
+                                  {/* Left Border accent */}
+                                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
+                                  
+                                  <div className="p-4 pl-5">
+                                    <div className="flex items-start justify-between mb-3">
+                                      <div className="flex items-center gap-3">
+                                        <Avatar className="h-10 w-10 border border-white/10 shrink-0">
+                                          <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${detail.username}`} />
+                                          <AvatarFallback className="bg-primary/10 text-primary">{detail.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                          <p className="font-bold text-white text-sm">{detail.username}</p>
+                                          <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
+                                            <Calendar className="h-3 w-3" />
+                                            {new Date(detail.expense_timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="flex items-center">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-white rounded-full">
+                                          <Edit3 className="h-4 w-4" />
                                         </Button>
                                         <Button
                                           variant="ghost"
                                           size="icon"
-                                          className="h-7 w-7 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                          className="h-8 w-8 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-full"
                                           onClick={() => handleDeleteClick({ ...detail, event_id: event.event_id })}
                                         >
-                                          <Trash2 className="h-3.5 w-3.5" />
+                                          <Trash2 className="h-4 w-4" />
                                         </Button>
                                       </div>
-                                    </TableCell>
+                                    </div>
+
+                                    <div className="flex items-center justify-between bg-black/20 rounded-xl p-3 border border-white/5">
+                                      <div className="text-center px-2">
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Quantity</span>
+                                        <span className="font-mono text-white text-sm">{detail.quantity}</span>
+                                      </div>
+                                      <div className="w-px h-8 bg-white/10" />
+                                      <div className="text-right px-2">
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Total Cost</span>
+                                        <span className="font-mono text-lg font-bold text-primary italic">৳{detail.total_cost.toLocaleString()}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block rounded-2xl border border-white/10 overflow-hidden bg-black/20">
+                              <Table>
+                                <TableHeader className="bg-white/5">
+                                  <TableRow>
+                                    <TableHead className="text-slate-400">User</TableHead>
+                                    <TableHead className="text-center text-slate-400">Quantity</TableHead>
+                                    <TableHead className="text-right text-slate-400">Cost</TableHead>
+                                    <TableHead className="text-right text-slate-400">Timestamp</TableHead>
+                                    <TableHead className="w-[80px]"></TableHead>
                                   </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </div>
+                                </TableHeader>
+                                <TableBody>
+                                  {details[event.event_id].map((detail) => (
+                                    <TableRow key={detail.expense_id} className="hover:bg-white/5 border-white/10">
+                                      <TableCell className="font-medium text-slate-200 flex items-center gap-2">
+                                        <User className="h-3.5 w-3.5 text-primary" />
+                                        {detail.username}
+                                      </TableCell>
+                                      <TableCell className="text-center font-mono">{detail.quantity}</TableCell>
+                                      <TableCell className="text-right font-bold font-mono text-white">৳{detail.total_cost.toLocaleString()}</TableCell>
+                                      <TableCell className="text-right text-[10px] text-slate-500 whitespace-nowrap">
+                                        {new Date(detail.expense_timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                      </TableCell>
+                                      <TableCell>
+                                        <div className="flex items-center gap-1">
+                                          <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-400 hover:text-white rounded-lg">
+                                            <Edit3 className="h-3.5 w-3.5" />
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-7 w-7 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                            onClick={() => handleDeleteClick({ ...detail, event_id: event.event_id })}
+                                          >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                          </Button>
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </>
                         ) : (
                           <div className="py-6 text-center text-xs text-slate-600 italic">
                             No records found for this event.

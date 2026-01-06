@@ -32,6 +32,35 @@ import {
 import { Skeleton } from '../components/ui/skeleton';
 import { cn } from '../lib/utils';
 
+const MobileGroupFinanceCard = ({ user }) => (
+  <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-3 mb-3">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-white/5 uppercase">
+          {user.username.substring(0, 2)}
+        </div>
+        <span className="font-bold text-white uppercase tracking-tight">{user.username}</span>
+      </div>
+      <div className={cn(
+        "font-mono font-bold text-lg tracking-tighter italic",
+        user.balance < 0 ? "text-red-400" : "text-primary"
+      )}>
+        ৳{user.balance.toLocaleString()}
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
+      <div>
+        <span className="text-[10px] text-slate-500 uppercase tracking-widest block">Deposited</span>
+        <span className="text-emerald-400/80 font-mono font-bold">৳{user.total_deposited.toLocaleString()}</span>
+      </div>
+      <div className="text-right">
+        <span className="text-[10px] text-slate-500 uppercase tracking-widest block">Spent</span>
+        <span className="text-orange-400/80 font-mono font-bold">৳{user.total_spent.toLocaleString()}</span>
+      </div>
+    </div>
+  </div>
+);
+
 const GroupFinances = () => {
   const { groupId } = useParams();
   const [summary, setSummary] = useState(null);
@@ -179,54 +208,69 @@ const GroupFinances = () => {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader className="bg-white/5">
-              <TableRow className="border-white/5 hover:bg-transparent">
-                <TableHead className="text-slate-400 py-4 pl-6 flex items-center gap-2">
-                  <User className="h-3.5 w-3.5" /> Member
-                </TableHead>
-                <TableHead className="text-right text-slate-400 pr-6">Deposited</TableHead>
-                <TableHead className="text-right text-slate-400 pr-6">Spent</TableHead>
-                <TableHead className="text-right text-slate-400 pr-6">Net Balance</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {memberUsers.map((user) => (
-                <TableRow key={user.user_id} className={cn(
-                  "border-white/5 hover:bg-white/5 transition-colors group",
-                  user.balance < 0 && "bg-red-500/5"
-                )}>
-                  <TableCell className="py-4 pl-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-white/5 group-hover:border-primary/50 transition-colors uppercase">
-                        {user.username.substring(0, 2)}
-                      </div>
-                      <span className="font-bold text-white uppercase tracking-tight">{user.username}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right pr-6 font-mono font-bold text-emerald-400/80">
-                    ৳{user.total_deposited.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-right pr-6 font-mono font-bold text-orange-400/80">
-                    ৳{user.total_spent.toLocaleString()}
-                  </TableCell>
-                  <TableCell className={cn(
-                    "text-right pr-6 font-mono font-bold text-lg tracking-tighter italic",
-                    user.balance < 0 ? "text-red-400" : "text-primary"
+          {/* Mobile View */}
+          <div className="md:hidden p-4 space-y-4">
+            {memberUsers.map(user => (
+              <MobileGroupFinanceCard key={user.user_id} user={user} />
+            ))}
+            {memberUsers.length === 0 && (
+              <div className="text-center text-slate-500 italic py-8">
+                No active members found.
+              </div>
+            )}
+          </div>
+
+          {/* Desktop View */}
+          <div className="hidden md:block overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-white/5">
+                <TableRow className="border-white/5 hover:bg-transparent">
+                  <TableHead className="text-slate-400 py-4 pl-6 flex items-center gap-2">
+                    <User className="h-3.5 w-3.5" /> Member
+                  </TableHead>
+                  <TableHead className="text-right text-slate-400 pr-6">Deposited</TableHead>
+                  <TableHead className="text-right text-slate-400 pr-6">Spent</TableHead>
+                  <TableHead className="text-right text-slate-400 pr-6">Net Balance</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {memberUsers.map((user) => (
+                  <TableRow key={user.user_id} className={cn(
+                    "border-white/5 hover:bg-white/5 transition-colors group",
+                    user.balance < 0 && "bg-red-500/5"
                   )}>
-                    ৳{user.balance.toLocaleString()}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {memberUsers.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={4} className="h-32 text-center text-slate-500 italic">
-                    No active members found in this group.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                    <TableCell className="py-4 pl-6">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-white/5 group-hover:border-primary/50 transition-colors uppercase">
+                          {user.username.substring(0, 2)}
+                        </div>
+                        <span className="font-bold text-white uppercase tracking-tight">{user.username}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right pr-6 font-mono font-bold text-emerald-400/80">
+                      ৳{user.total_deposited.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right pr-6 font-mono font-bold text-orange-400/80">
+                      ৳{user.total_spent.toLocaleString()}
+                    </TableCell>
+                    <TableCell className={cn(
+                      "text-right pr-6 font-mono font-bold text-lg tracking-tighter italic",
+                      user.balance < 0 ? "text-red-400" : "text-primary"
+                    )}>
+                      ৳{user.balance.toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {memberUsers.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-32 text-center text-slate-500 italic">
+                      No active members found in this group.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 

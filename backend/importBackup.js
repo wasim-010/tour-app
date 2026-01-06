@@ -22,6 +22,15 @@ const tables = [
 const bcrypt = require('bcryptjs');
 const defaultPasswordHash = bcrypt.hashSync('tour123', 10);
 
+async function getTableColumns(tableName) {
+    return new Promise((resolve, reject) => {
+        db.all(`PRAGMA table_info(${tableName})`, (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows.map(row => row.name));
+        });
+    });
+}
+
 async function importTable(tableName) {
     const filePath = path.join(backupDir, `${tableName}.json`);
     if (!fs.existsSync(filePath)) {
@@ -35,22 +44,28 @@ async function importTable(tableName) {
         return;
     }
 
-    let columns = Object.keys(data[0]);
+    const tableColumns = await getTableColumns(tableName);
+    let columnsInBackup = Object.keys(data[0]);
 
-    // Add missing password_hash for users table
-    if (tableName === 'users' && !columns.includes('password_hash')) {
-        columns.push('password_hash');
-        data.forEach(row => row.password_hash = defaultPasswordHash);
+    // Filter columns to only those that exist in the table
+    let columnsToImport = columnsInBackup.filter(col => tableColumns.includes(col));
+
+    // Special case for users table: ensure password_hash is set if missing from backup but present in table
+    if (tableName === 'users' && tableColumns.includes('password_hash')) {
+        if (!columnsToImport.includes('password_hash')) {
+            columnsToImport.push('password_hash');
+            data.forEach(row => row.password_hash = defaultPasswordHash);
+        }
     }
 
-    const placeholders = columns.map(() => '?').join(',');
-    const sql = `INSERT OR REPLACE INTO ${tableName} (${columns.join(',')}) VALUES (${placeholders})`;
+    const placeholders = columnsToImport.map(() => '?').join(',');
+    const sql = `INSERT OR REPLACE INTO ${tableName} (${columnsToImport.join(',')}) VALUES (${placeholders})`;
 
     return new Promise((resolve, reject) => {
         db.serialize(() => {
             const stmt = db.prepare(sql);
             data.forEach(row => {
-                const values = columns.map(col => row[col]);
+                const values = columnsToImport.map(col => row[col]);
                 stmt.run(values);
             });
             stmt.finalize((err) => {

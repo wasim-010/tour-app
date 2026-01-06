@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Receipt,
   Users as UsersIcon,
@@ -11,7 +11,8 @@ import {
   Search,
   UserCheck,
   Banknote,
-  Hash
+  Hash,
+  Check
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../api/api';
@@ -42,6 +43,12 @@ const AdminAddExpense = () => {
   const [loading, setLoading] = useState({ groups: true, itinerary: false, users: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Use refs to access current state in stable callbacks without triggering identity changes
+  const itinerariesRef = useRef(itineraries);
+  itinerariesRef.current = itineraries;
+  const usersRef = useRef(users);
+  usersRef.current = users;
+
   useEffect(() => {
     const fetchAdminGroups = async () => {
       try {
@@ -64,39 +71,49 @@ const AdminAddExpense = () => {
 
     setLoading(prev => ({ ...prev, itinerary: true, users: true }));
     try {
-      if (!itineraries[groupId]) {
+      const currentItinerary = itinerariesRef.current[groupId];
+      const currentUsers = usersRef.current[groupId];
+
+      if (!currentItinerary) {
         const itineraryRes = await api.get(`/tours/${groupId}`);
         setItineraries(prev => ({ ...prev, [groupId]: itineraryRes.data }));
       }
-      if (!users[groupId]) {
+      if (!currentUsers) {
         const usersRes = await api.get(`/groups/${groupId}/users`);
         setUsers(prev => ({ ...prev, [groupId]: usersRes.data.filter(u => u.role !== 'admin') }));
       }
     } catch (error) {
+      console.error(error);
       toast.error('Failed to load tour details.');
     } finally {
       setLoading(prev => ({ ...prev, itinerary: false, users: false }));
     }
-  }, [itineraries, users]);
+  }, []); // Stable identity
 
-  const availableDays = itineraries[selectedGroupId]?.days || [];
-  const availableLocations = availableDays.find(d => d.day_id.toString() === selectedDayId)?.locations || [];
-  const availableEvents = availableLocations.find(l => l.location_id.toString() === selectedLocationId)?.events || [];
-  const availableUsers = users[selectedGroupId] || [];
+  const availableDays = useMemo(() => itineraries[selectedGroupId]?.days || [], [itineraries, selectedGroupId]);
+  const availableLocations = useMemo(() => availableDays.find(d => d.day_id.toString() === selectedDayId)?.locations || [], [availableDays, selectedDayId]);
+  const availableEvents = useMemo(() => availableLocations.find(l => l.location_id.toString() === selectedLocationId)?.events || [], [availableLocations, selectedLocationId]);
+  const availableUsers = useMemo(() => users[selectedGroupId] || [], [users, selectedGroupId]);
 
-  const toggleUser = (userId) => {
+  const toggleUser = useCallback((userId) => {
     setSelectedUserIds(prev =>
       prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
     );
-  };
+  }, []);
 
-  const handleSelectAllUsers = (checked) => {
-    if (checked) {
-      setSelectedUserIds(availableUsers.map(u => u.user_id.toString()));
-    } else {
-      setSelectedUserIds([]);
-    }
-  };
+  const handleSelectAllUsers = useCallback((checked) => {
+    const allUserIds = availableUsers.map(u => u.user_id.toString());
+    setSelectedUserIds(prev => {
+      if (checked) {
+        // Only update if not all are already selected to avoid extra renders
+        if (prev.length === allUserIds.length) return prev;
+        return allUserIds;
+      } else {
+        if (prev.length === 0) return prev;
+        return [];
+      }
+    });
+  }, [availableUsers]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -236,22 +253,12 @@ const AdminAddExpense = () => {
               {loading.users ? <Skeleton className="h-40 w-full rounded-xl" /> : (
                 <div className="grid sm:grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-2 scrollbar-none">
                   {availableUsers.map(u => (
-                    <div
+                    <UserSelectItem
                       key={u.user_id}
-                      className={cn(
-                        "p-3 rounded-xl border border-white/5 flex items-center gap-3 cursor-pointer transition-all",
-                        selectedUserIds.includes(u.user_id.toString())
-                          ? "bg-primary/20 border-primary/40 ring-1 ring-primary/40"
-                          : "bg-white/5 hover:bg-white/10"
-                      )}
-                      onClick={() => toggleUser(u.user_id.toString())}
-                    >
-                      <Checkbox
-                        checked={selectedUserIds.includes(u.user_id.toString())}
-                        onCheckedChange={() => toggleUser(u.user_id.toString())}
-                      />
-                      <span className="text-sm font-medium text-white truncate">{u.username}</span>
-                    </div>
+                      user={u}
+                      isSelected={selectedUserIds.includes(u.user_id.toString())}
+                      onToggle={toggleUser}
+                    />
                   ))}
                   {availableUsers.length === 0 && (
                     <div className="col-span-2 py-12 text-center text-slate-600 italic">
@@ -336,5 +343,35 @@ const AdminAddExpense = () => {
     </div>
   );
 };
+
+
+
+const UserSelectItem = React.memo(({ user, isSelected, onToggle }) => {
+  const userIdStr = user.user_id.toString();
+
+  return (
+    <div
+      className={cn(
+        "p-3 rounded-xl border border-white/5 flex items-center gap-3 cursor-pointer transition-all",
+        isSelected
+          ? "bg-primary/20 border-primary/40 ring-1 ring-primary/40"
+          : "bg-white/5 hover:bg-white/10"
+      )}
+      onClick={() => onToggle(userIdStr)}
+    >
+      <div
+        className={cn(
+          "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center",
+          isSelected ? "bg-primary text-primary-foreground" : "text-transparent"
+        )}
+      >
+        <Check className="h-4 w-4" />
+      </div>
+      <span className="text-sm font-medium text-white truncate">{user.username}</span>
+    </div>
+  );
+});
+
+UserSelectItem.displayName = "UserSelectItem";
 
 export default AdminAddExpense;

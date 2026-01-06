@@ -12,7 +12,8 @@ import {
   Calendar,
   MapPin,
   Banknote,
-  MessageSquareQuote
+  MessageSquareQuote,
+  Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../api/api';

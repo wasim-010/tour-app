@@ -113,21 +113,21 @@ const ManageUsers = ({ groupId }) => {
           ) : (
             members.length > 0 ? (
               members.map(member => (
-                <div key={member.user_id} className="group p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-10 w-10 border border-white/10">
+                <div key={member.user_id} className="group p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <Avatar className="h-10 w-10 border border-white/10 shrink-0">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.username}`} />
                       <AvatarFallback className="bg-primary/10 text-primary">{member.username.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-white uppercase tracking-tight">{member.username}</span>
-                      <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
-                        <Mail className="h-3 w-3" /> {member.email}
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-bold text-white uppercase tracking-tight truncate">{member.username}</span>
+                      <span className="text-xs text-slate-500 font-medium flex items-center gap-1 truncate">
+                        <Mail className="h-3 w-3 shrink-0" /> <span className="truncate">{member.email}</span>
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 shrink-0">
                     <Badge variant="secondary" className="bg-white/5 text-slate-500 h-6 px-2 uppercase text-[10px] tracking-widest border-none">
                       {member.role}
                     </Badge>
