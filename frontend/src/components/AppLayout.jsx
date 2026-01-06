@@ -149,9 +149,11 @@ const AppLayout = () => {
           scrolled ? "bg-slate-900/80 backdrop-blur-xl border-b border-white/5" : "bg-transparent"
         )}>
           <div className="flex items-center gap-4">
-            <div className="lg:hidden h-10 w-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/20">
-              <Plane className="h-5 w-5 text-primary -rotate-45" />
-            </div>
+            <Link to="/dashboard" className="lg:hidden">
+              <div className="h-10 w-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/20 hover:bg-primary/30 transition-colors">
+                <Plane className="h-5 w-5 text-primary -rotate-45" />
+              </div>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 font-mono">
