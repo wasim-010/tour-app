@@ -4,77 +4,70 @@
 
 @layer base {
   :root {
-    /* Shopify Polaris Light Mode (Default) */
-    
-    /* Background: #F6F6F7 (Polaris Surface) */
-    --background: 240 5% 96%; 
-    
-    /* Foreground: #202223 (Polaris Text/Ink) */
-    --foreground: 200 5% 13%;
+    /* Polaris Light Tokens */
+    --background: 220 14% 96%; /* #F1F2F4 (Page BG) */
+    --foreground: 220 6% 10%; /* #1A1C1D (Text) */
 
-    /* Card: #FFFFFF */
-    --card: 0 0% 100%;
-    --card-foreground: 200 5% 13%;
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 220 6% 10%;
 
-    /* Popover: #FFFFFF */
     --popover: 0 0% 100%;
-    --popover-foreground: 200 5% 13%;
+    --popover-foreground: 220 6% 10%;
 
-    /* Primary: #303030 (Polaris Primary Action / Dark Grey) */
-    /* Note: Classic Shopify used Green (#008060), but modern Admin uses Dark Grey/Black for primary buttons */
-    --primary: 0 0% 19%; 
+    /* Polaris Primary Action: Black or Dark Gray */
+    --primary: 220 6% 10%; /* #1A1C1D */
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: #FFFFFF with Border (Polaris Secondary Button) */
+    /* Standard Button / Surface */
     --secondary: 0 0% 100%;
-    --secondary-foreground: 200 5% 13%;
+    --secondary-foreground: 220 6% 10%;
 
-    /* Muted: #E1E3E5 (Backgrounds for subdued elements) */
-    --muted: 210 8% 89%;
-    --muted-foreground: 215 3% 40%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 215 16% 47%; /* #6D7175 (Subdued text) */
 
-    /* Accent: #F1F2F4 (Hover states) */
-    --accent: 240 5% 96%;
-    --accent-foreground: 200 5% 13%;
+    --accent: 220 14% 94%; /* Hover state */
+    --accent-foreground: 220 6% 10%;
 
-    /* Destructive: #D82C0D (Polaris Critical) */
-    --destructive: 10 89% 45%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 358 66% 51%; /* #D82C0D */
+    --destructive-foreground: 0 0% 100%;
 
-    /* Border: #E1E3E5 (Polaris Border Subdued) */
-    --border: 210 8% 89%;
-    
-    /* Input: #8C9196 (Polaris Input Border) */
-    --input: 210 4% 57%;
-    
-    /* Ring: #008060 (Polaris Success/Focus Green) */
-    --ring: 165 100% 25%;
+    /* Borders */
+    --border: 220 13% 91%; /* #E1E3E5 */
+    --input: 0 0% 100%; /* Input background often white in Polaris with border */
+    --ring: 220 6% 10%;
 
-    /* Polaris uses 0.5rem (8px) or 0.25rem (4px) mostly */
-    --radius: 0.5rem;
+    --radius: 0.5rem; /* 8px */
   }
 
-  /* Optional: A dark mode interpretation of Polaris (Polaris is strictly light, but this keeps your app working in dark mode) */
   .dark {
-    --background: 240 4% 10%;
-    --foreground: 0 0% 98%;
-    --card: 240 4% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 4% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Simple Dark Mode (Not part of Polaris spec but minimal) */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47.4% 11.2%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
 
@@ -85,25 +78,19 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    /* Shopify crisp font rendering */
-    -webkit-font-smoothing: antialiased; 
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Polaris-style Utilities */
-
-/* Polaris Card Shadow */
-.polaris-shadow {
-  box-shadow: 0px 0px 5px rgba(23, 24, 24, 0.05), 0px 1px 2px rgba(0, 0, 0, 0.15);
+/* Minimal Utilities */
+.glass, .glass-card {
+  /* Remove glass effects for minimal design, use flat white */
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.polaris-shadow-hover {
-  box-shadow: 0px 0px 5px rgba(23, 24, 24, 0.1), 0px 2px 8px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-/* Custom Scrollbar (Subtle for Polaris) */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -111,9 +98,7 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #babfc3; /* Polaris icon subdued color */
+  background: hsl(var(--muted-foreground));
   border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #6d7175;
+  opacity: 0.5;
 }
