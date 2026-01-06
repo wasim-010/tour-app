@@ -17,6 +17,18 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        // Shopify Polaris Font Stack
+        sans: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "San Francisco",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "sans-serif",
+        ],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -51,11 +63,23 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Specific Polaris static colors if needed
+        polaris: {
+          green: "#008060",
+          text: "#202223",
+          subdued: "#6D7175",
+        }
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        // Polaris Elevations
+        'polaris-sm': '0 1px 0 rgba(0,0,0,0.05)',
+        'polaris-md': '0px 0px 5px rgba(23, 24, 24, 0.05), 0px 1px 2px rgba(0, 0, 0, 0.15)',
+        'polaris-lg': '0px 0px 6px rgba(23, 24, 24, 0.05), 0px 8px 12px rgba(0, 0, 0, 0.15)',
       },
       keyframes: {
         "accordion-down": {

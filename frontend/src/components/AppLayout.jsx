@@ -35,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { cn } from '../lib/utils';
+import { ModeToggle } from './mode-toggle';
 
 const AppLayout = () => {
   const { user, logout } = useAuth();
@@ -89,17 +90,17 @@ const AppLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white selection:bg-primary/30 flex overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 flex overflow-hidden">
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-violet-600/5 rounded-full blur-[100px]" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-border to-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
       </div>
 
       {/* Desktop Sidebar */}
       <aside className={cn(
-        "hidden lg:flex flex-col border-r border-white/5 bg-slate-900/40 backdrop-blur-3xl z-50 transition-all duration-500 ease-in-out sticky top-0 h-screen",
+        "hidden lg:flex flex-col border-r border-border bg-card/40 backdrop-blur-3xl z-50 transition-all duration-500 ease-in-out sticky top-0 h-screen",
         isSidebarOpen ? "w-72" : "w-20"
       )}>
         <div className="p-6 flex items-center justify-between">
@@ -146,7 +147,7 @@ const AppLayout = () => {
         {/* Header */}
         <header className={cn(
           "h-16 sticky top-0 z-40 flex items-center justify-between px-6 transition-all duration-300",
-          scrolled ? "bg-slate-900/80 backdrop-blur-xl border-b border-white/5" : "bg-transparent"
+          scrolled ? "bg-background/80 backdrop-blur-xl border-b border-border" : "bg-transparent"
         )}>
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="lg:hidden">
@@ -164,11 +165,15 @@ const AppLayout = () => {
 
             <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block" />
 
+            <ModeToggle />
+            
+            <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block" />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 flex items-center gap-3 px-2 hover:bg-white/5 rounded-xl transition-all">
                   <div className="text-right hidden sm:block">
-                    <p className="text-xs font-bold text-white tracking-tight uppercase">{user?.username}</p>
+                    <p className="text-xs font-bold text-foreground tracking-tight uppercase">{user?.username}</p>
                     <p className="text-[10px] text-primary/70 font-bold uppercase">{user?.role}</p>
                   </div>
                   <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-xl">
@@ -177,10 +182,10 @@ const AppLayout = () => {
                       {user?.username?.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <ChevronDown className="h-3 w-3 text-slate-500" />
+                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-slate-900/90 backdrop-blur-xl border-white/10 rounded-2xl p-2">
+              <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-xl border-border rounded-2xl p-2">
                 <DropdownMenuLabel className="px-3 py-2">
                   <p className="text-xs font-bold text-slate-500 tracking-widest uppercase">Member Registry</p>
                 </DropdownMenuLabel>
@@ -235,8 +240,8 @@ const AppLayout = () => {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="absolute top-0 bottom-0 left-0 w-72 bg-[#020617] border-r border-white/10 p-6 shadow-2xl animate-in slide-in-from-left duration-300">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute top-0 bottom-0 left-0 w-72 bg-card border-r border-border p-6 shadow-2xl animate-in slide-in-from-left duration-300">
             <div className="flex items-center justify-between mb-8">
               <Link to="/dashboard" className="flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
                 <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shadow-2xl shadow-primary/40">
